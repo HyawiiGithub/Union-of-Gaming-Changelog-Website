@@ -11,7 +11,6 @@
         --text: #e6e6e6;
         --card: #1a1a1a;
         --accent: #4da6ff;
-        --glow: 0 0 10px var(--accent), 0 0 20px var(--accent);
     }
 
     body.light {
@@ -19,7 +18,6 @@
         --text: #111;
         --card: #fff;
         --accent: #0077ff;
-        --glow: 0 0 10px var(--accent);
     }
 
     body {
@@ -44,7 +42,6 @@
 
     .sidebar h2 {
         color: var(--accent);
-        text-shadow: var(--glow);
         margin-bottom: 20px;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -62,7 +59,6 @@
     .sidebar a:hover {
         opacity: 1;
         color: var(--accent);
-        text-shadow: var(--glow);
     }
 
     /* MAIN CONTENT */
@@ -82,7 +78,6 @@
     header h1 {
         font-size: 3rem;
         color: var(--accent);
-        text-shadow: var(--glow);
         margin: 0;
     }
 
@@ -97,12 +92,11 @@
         border-radius: 6px;
         cursor: pointer;
         color: var(--accent);
-        text-shadow: var(--glow);
         transition: 0.3s;
     }
 
     .toggle:hover {
-        box-shadow: var(--glow);
+        opacity: 0.8;
     }
 
     /* COLLAPSIBLE SECTIONS */
@@ -119,12 +113,7 @@
     summary {
         font-size: 1.3rem;
         color: var(--accent);
-        text-shadow: var(--glow);
         outline: none;
-    }
-
-    details[open] {
-        box-shadow: var(--glow);
     }
 
     ul {
@@ -141,6 +130,43 @@
     a {
         color: var(--accent);
     }
+
+    /* ADMIN PANEL */
+    #passwordBox, #adminPanel {
+        margin-top: 40px;
+        padding: 20px;
+        background: var(--card);
+        border: 2px solid var(--accent);
+        border-radius: 6px;
+    }
+
+    #adminPanel {
+        display: none;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background: var(--bg);
+        color: var(--text);
+        border: 1px solid #444;
+        border-radius: 4px;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: var(--accent);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
 </style>
 </head>
 
@@ -149,7 +175,6 @@
 <div class="sidebar">
     <h2>UOG Menu</h2>
     <a href="#v100">Version 1.0.0</a>
-   
 </div>
 
 <div class="content">
@@ -161,6 +186,9 @@
     <p>Official Changelog</p>
 </header>
 
+<!-- CHANGELOGS -->
+<div id="changelogs">
+
 <details id="v100">
     <summary>Version 1.0.0</summary>
     <ul>
@@ -170,7 +198,22 @@
     </ul>
 </details>
 
+</div>
 
+<!-- PASSWORD LOGIN -->
+<div id="passwordBox">
+    <h3>Admin Login</h3>
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button onclick="checkPassword()">Login</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+    <h3>Add New Changelog</h3>
+    <input type="text" id="versionInput" placeholder="Version number (e.g., 1.1.0)">
+    <textarea id="changesInput" rows="5" placeholder="Enter changes, one per line"></textarea>
+    <button onclick="addChangelog()">Add Changelog</button>
+</div>
 
 <footer>
     <p>Created by Hyawii & Contributors</p>
@@ -183,7 +226,59 @@
 function toggleTheme() {
     document.body.classList.toggle("light");
 }
+
+function checkPassword() {
+    const pass = document.getElementById("passwordInput").value;
+
+    if (pass === "UOGadmin") {
+        document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("passwordBox").style.display = "none";
+    } else {
+        alert("Wrong password");
+    }
+}
+
+function addChangelog() {
+    const version = document.getElementById("versionInput").value;
+    const changes = document.getElementById("changesInput").value.split("\n");
+
+    if (!version || changes.length === 0) {
+        alert("Fill in all fields");
+        return;
+    }
+
+    const id = "v" + version.replace(/\./g, "");
+
+    const block = document.createElement("details");
+    block.id = id;
+
+    const summary = document.createElement("summary");
+    summary.textContent = "Version " + version;
+
+    const ul = document.createElement("ul");
+    changes.forEach(c => {
+        if (c.trim() !== "") {
+            const li = document.createElement("li");
+            li.textContent = c;
+            ul.appendChild(li);
+        }
+    });
+
+    block.appendChild(summary);
+    block.appendChild(ul);
+
+    document.getElementById("changelogs").appendChild(block);
+
+    const link = document.createElement("a");
+    link.href = "#" + id;
+    link.textContent = "Version " + version;
+    document.querySelector(".sidebar").appendChild(link);
+
+    document.getElementById("versionInput").value = "";
+    document.getElementById("changesInput").value = "";
+}
 </script>
 
 </body>
 </html>
+
