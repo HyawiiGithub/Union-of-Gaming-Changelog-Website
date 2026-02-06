@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UOG Changelog</title>
+
+<style>
+:root {
+    --bg: #0d0d0d;
+    --text: #e6e6e6;
+    --card: #1a1a1a;
+    --accent: #4da6ff;
+}
+
+body.light {
+    --bg: #f2f2f2;
+    --text: #111;
+    --card: #fff;
+    --accent: #0077ff;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    transition: background 0.4s, color 0.4s;
+}
+
+.sidebar {
+    width: 240px;
+    background: #111;
+    padding: 20px;
+    border-right: 2px solid #333;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar h2 {
+    color: var(--accent);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 0;
+    color: var(--text);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+
+.sidebar a:hover {
+    opacity: 1;
+    color: var(--accent);
+}
+
+.content {
+    margin-left: 260px;
+    padding: 40px;
+    width: calc(100% - 260px);
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 3rem;
+    color: var(--accent);
+    margin: 0;
+}
+
+.toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--card);
+    border: 2px solid var(--accent);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--accent);
+}
+
+details {
+    background: var(--card);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+}
+
+summary {
+    font-size: 1.3rem;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.deleteBtn {
+    margin-top: 10px;
+    background: #ff4444;
+    border: none;
+    padding: 6px 12px;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none;
+}
+
+#passwordBox, #adminPanel {
+    margin-top: 40px;
+    padding: 20px;
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+}
+
+#adminPanel {
+    display: none;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid #444;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h2>UOG Menu</h2>
+    <div id="sidebarLinks"></div>
+</div>
+
+<div class="content">
+
+<button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+
+<header>
+    <h1>Union of Gaming Mod</h1>
+    <p>Official Changelog</p>
+</header>
+
+<div id="changelogs"></div>
+
+<div id="passwordBox">
+    <h3>Admin Login</h3>
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button onclick="checkPassword()">Login</button>
+</div>
+
+<div id="adminPanel">
+    <h3>Add New Changelog</h3>
+    <input type="text" id="versionInput" placeholder="Version number (e.g., 1.1.0)">
+    <textarea id="changesInput" rows="5" placeholder="Enter changes, one per line"></textarea>
+    <button onclick="addChangelog()">Add Changelog</button>
+</div>
+
+<footer>
+    <p>Created by Hyawii & Contributors</p>
+    <p>
+        Mod Link:
+        <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3659359142">
+            Mod Link Have Fun!
+        </a>
+    </p>
+</footer>
+
+</div>
+
+<script>
+let isAdmin = false;
+
+/* SHA-256 hash of "hyawiipass" */
+const ADMIN_HASH =
+"5a9b4b6d3b3a67b7d12d6c3a35d8b41fd9b8e2c2fdc7a7c52b2e02b3a77c87c4";
+
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
+
+async function hashPassword(text) {
+    const enc = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", enc);
+    return [...new Uint8Array(hashBuffer)]
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+async function checkPassword() {
+    const input = document.getElementById("passwordInput").value;
+    const hashed = await hashPassword(input);
+
+    if (hashed === ADMIN_HASH) {
+        isAdmin = true;
+        document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("passwordBox").style.display = "none";
+        document.querySelectorAll(".deleteBtn").forEach(b => {
+            b.style.display = "inline-block";
+        });
+    } else {
+        alert("Wrong password");
+    }
+}
+
+function loadChangelogs() {
+    const saved = JSON.parse(localStorage.getItem("uog_changelogs")) || [];
+    saved.forEach(entry => renderChangelog(entry.version, entry.changes));
+}
+
+function saveChangelogs() {
+    const blocks = document.querySelectorAll("#changelogs details");
+    const data = [];
+
+    blocks.forEach(block => {
+        const version = block.getAttribute("data-version");
+        const items = [...block.querySelectorAll("li")].map(li => li.textContent);
+        data.push({ version, changes: items });
+    });
+
+    localStorage.setItem("uog_changelogs", JSON.stringify(data));
+}
+
+function renderChangelog(version, changes) {
+    const id = "v" + version.replace(/\./g, "");
+
+    const block = document.createElement("details");
+    block.id = id;
+    block.setAttribute("data-version", version);
+
+    const summary = document.createElement("summary");
+    summary.textContent = "Version " + version;
+
+    const ul = document.createElement("ul");
+    changes.forEach(c => {
+        const li = document.createElement("li");
+        li.textContent = c;
+        ul.appendChild(li);
+    });
+
+    const del = document.createElement("button");
+    del.className = "deleteBtn";
+    del.textContent = "Delete Changelog";
+    del.style.display = isAdmin ? "inline-block" : "none";
+    del.onclick = () => {
+        block.remove();
+        document.getElementById(id + "_link")?.remove();
+        saveChangelogs();
+    };
+
+    block.appendChild(summary);
+    block.appendChild(ul);
+    block.appendChild(del);
+    document.getElementById("changelogs").appendChild(block);
+
+    const link = document.createElement("a");
+    link.href = "#" + id;
+    link.id = id + "_link";
+    link.textContent = "Version " + version;
+    document.getElementById("sidebarLinks").appendChild(link);
+}
+
+function addChangelog() {
+    const version = document.getElementById("versionInput").value;
+    const changes = document
+        .getElementById("changesInput")
+        .value.split("\n")
+        .filter(x => x.trim() !== "");
+
+    if (!version || changes.length === 0) {
+        alert("Fill in all fields");
+        return;
+    }
+
+    renderChangelog(version, changes);
+    saveChangelogs();
+
+    document.getElementById("versionInput").value = "";
+    document.getElementById("changesInput").value = "";
+}
+
+loadChangelogs();
+</script>
+
+</body>
+</html>
