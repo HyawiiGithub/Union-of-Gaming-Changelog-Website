@@ -6,75 +6,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* =======================
+   NEON THEME
+======================= */
 :root {
-  --bg:#0d0d0d;
-  --text:#e6e6e6;
-  --card:#1a1a1a;
-  --accent:#4da6ff;
+  --bg:#070b14;
+  --card:#0e1629;
+  --text:#e6f1ff;
+  --neon:#00eaff;
+  --neon2:#7c4dff;
 }
+
+* { box-sizing:border-box }
 
 body {
   margin:0;
-  font-family:Segoe UI,sans-serif;
-  background:var(--bg);
+  font-family:Segoe UI,system-ui,sans-serif;
+  background:radial-gradient(circle at top, #0b132b, #02040a);
   color:var(--text);
-  display:flex;
+}
+
+/* =======================
+   LAYOUT (FIXED)
+======================= */
+.app {
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:100vh;
 }
 
 .sidebar {
-  width:240px;
-  background:#111;
+  background:#050913;
+  border-right:1px solid rgba(0,234,255,.2);
   padding:20px;
-  position:fixed;
-  height:100vh;
-  overflow:auto;
 }
 
 .content {
-  margin-left:260px;
   padding:40px;
-  width:100%;
 }
 
-details {
+/* =======================
+   NEON EFFECTS
+======================= */
+h1,h2,h3 {
+  color:var(--neon);
+  text-shadow:0 0 10px rgba(0,234,255,.6);
+}
+
+.card {
   background:var(--card);
+  border:1px solid rgba(0,234,255,.3);
+  box-shadow:0 0 20px rgba(0,234,255,.15);
+  border-radius:10px;
+  padding:20px;
   margin-bottom:20px;
-  padding:15px;
+  animation:glow 3s infinite alternate;
 }
 
-summary {
-  color:var(--accent);
-  font-size:1.2rem;
-  cursor:pointer;
+@keyframes glow {
+  from { box-shadow:0 0 10px rgba(0,234,255,.2); }
+  to   { box-shadow:0 0 25px rgba(124,77,255,.5); }
 }
 
-button,input,textarea {
+/* =======================
+   FORMS
+======================= */
+input, textarea, button {
   width:100%;
+  padding:12px;
   margin-top:10px;
-  padding:10px;
-  background:#000;
-  color:#fff;
-  border:1px solid #444;
+  background:#02040a;
+  color:var(--text);
+  border:1px solid rgba(0,234,255,.4);
+  border-radius:6px;
 }
 
-.deleteBtn {
-  background:#ff4444;
-  margin-top:10px;
+button {
+  cursor:pointer;
+  color:var(--neon);
+  text-shadow:0 0 5px rgba(0,234,255,.8);
+  transition:.2s;
 }
 
-/* LOGIN PANEL */
+button:hover {
+  background:rgba(0,234,255,.15);
+}
+
+/* =======================
+   LOGIN PANEL (FIXED)
+======================= */
 #loginPanel {
   position:fixed;
   top:20px;
   right:20px;
   width:260px;
-  background:var(--card);
-  padding:15px;
-  border:2px solid var(--accent);
-  z-index:9999;
+  z-index:1000;
+  pointer-events:auto;
 }
 
-/* BANNED SCREEN (FIXED) */
+/* =======================
+   BANNED SCREEN (SAFE)
+======================= */
 #bannedScreen {
   display:none;
   position:fixed;
@@ -84,7 +116,30 @@ button,input,textarea {
   font-size:2rem;
   align-items:center;
   justify-content:center;
-  z-index:10000;
+  z-index:2000;
+  pointer-events:none;
+}
+
+/* =======================
+   DETAILS
+======================= */
+details {
+  background:var(--card);
+  border:1px solid rgba(0,234,255,.3);
+  border-radius:8px;
+  padding:15px;
+}
+
+summary {
+  cursor:pointer;
+  color:var(--neon2);
+  font-size:1.1rem;
+}
+
+.deleteBtn {
+  background:#ff3355;
+  border:none;
+  margin-top:10px;
 }
 </style>
 
@@ -96,44 +151,44 @@ button,input,textarea {
 
 <div id="bannedScreen">YOU ARE BANNED FROM THIS SITE</div>
 
-<div class="sidebar">
-  <h2>UOG Menu</h2>
-  <div id="sidebarLinks"></div>
-</div>
+<div class="app">
 
-<div class="content">
+  <div class="sidebar">
+    <h2>UOG</h2>
+    <div id="sidebarLinks"></div>
+  </div>
 
-<div id="loginPanel">
-  <h3>Login</h3>
-  <input id="loginUser" placeholder="Username">
-  <input id="loginPass" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <button onclick="register()">Register</button>
-</div>
+  <div class="content">
 
-<h1>Union of Gaming Mod</h1>
+    <div id="loginPanel" class="card">
+      <h3>Login</h3>
+      <input id="loginUser" placeholder="Username">
+      <input id="loginPass" type="password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <button onclick="register()">Register</button>
+    </div>
 
-<div id="changelogs"></div>
+    <h1>Union of Gaming Mod</h1>
 
-<div id="suggestionBox" style="display:none">
-  <h3>Submit a Suggestion</h3>
-  <textarea id="suggestionText"></textarea>
-  <button onclick="submitSuggestion()">Submit</button>
-</div>
+    <div id="changelogs"></div>
 
-<div id="adminPanel" style="display:none">
-  <h3>Add Changelog</h3>
-  <input id="versionInput" placeholder="Version">
-  <textarea id="changesInput" placeholder="One change per line"></textarea>
-  <button onclick="addChangelog()">Add</button>
+    <div id="suggestionBox" class="card" style="display:none">
+      <h3>Suggestions</h3>
+      <textarea id="suggestionText"></textarea>
+      <button onclick="submitSuggestion()">Send</button>
+    </div>
 
-  <h3>User Suggestions</h3>
-  <ul id="suggestionList"></ul>
+    <div id="adminPanel" class="card" style="display:none">
+      <h3>Admin</h3>
+      <input id="versionInput" placeholder="Version">
+      <textarea id="changesInput" placeholder="One per line"></textarea>
+      <button onclick="addChangelog()">Add Changelog</button>
 
-  <h3>Audit Logs</h3>
-  <ul id="auditList"></ul>
-</div>
+      <h3>Audit Logs</h3>
+      <ul id="auditList"></ul>
+    </div>
 
+  </div>
 </div>
 
 <script>
@@ -141,207 +196,91 @@ button,input,textarea {
 firebase.initializeApp({
   apiKey:"AIzaSyD9TWP_zvIbGQuOyjtE6aliFIfBx23wdyY",
   authDomain:"changelogs-website.firebaseapp.com",
-  projectId:"changelogs-website",
-  storageBucket:"changelogs-website.firebasestorage.app",
-  messagingSenderId:"98095071875",
-  appId:"1:98095071875:web:98d7816bb0549349bf11b6"
+  projectId:"changelogs-website"
 });
 
-const db = firebase.database();
-const usersRef = db.ref("users");
-const changelogRef = db.ref("uog_changelogs");
-const suggestionsRef = db.ref("suggestions");
-const auditRef = db.ref("audit_logs");
+const db=firebase.database();
+const users=db.ref("users");
+const logs=db.ref("audit_logs");
+const changelogsRef=db.ref("uog_changelogs");
 
-/* ================= GLOBAL ================= */
-let currentUser = null;
-let isAdmin = false;
+/* ADMIN */
+const ADMIN_HASH="0cd189c90f1d2420cea81ec6f2aec5dcf99bd152d874e3e5b0590a387b62c67a";
 
-const ADMIN_HASH =
-"0cd189c90f1d2420cea81ec6f2aec5dcf99bd152d874e3e5b0590a387b62c67a";
-
-/* AUTO-CREATE ADMIN (CRITICAL FIX) */
-usersRef.child("Hyawii").once("value", snap => {
-  if (!snap.exists()) {
-    usersRef.child("Hyawii").set({
-      password: ADMIN_HASH,
-      role: "admin",
-      banned: false
-    });
+users.child("Hyawii").once("value",s=>{
+  if(!s.exists()){
+    users.child("Hyawii").set({password:ADMIN_HASH,role:"admin",banned:false});
   }
 });
 
+let currentUser=null,isAdmin=false;
+
 /* ================= UTIL ================= */
-async function hashPassword(text){
-  const buf = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(text)
-  );
-  return [...new Uint8Array(buf)]
-    .map(b=>b.toString(16).padStart(2,"0"))
-    .join("");
+async function hashPassword(t){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
 }
 
-function logAudit(action, target=""){
-  auditRef.push({
-    user: currentUser || "SYSTEM",
-    action,
-    target,
-    time: new Date().toISOString()
-  });
+function audit(a){
+  logs.push({user:currentUser||"SYSTEM",action:a,time:new Date().toISOString()});
 }
 
 /* ================= AUTH ================= */
 async function login(){
-  const u = loginUser.value.trim();
-  const p = loginPass.value;
-  if (!u || !p) return alert("Missing fields");
+  const u=loginUser.value.trim();
+  const p=loginPass.value;
+  const h=await hashPassword(p);
 
-  const h = await hashPassword(p);
+  users.child(u).once("value",s=>{
+    const d=s.val();
+    if(!d) return alert("No user");
+    if(d.banned){ bannedScreen.style.display="flex"; return; }
+    if(d.password!==h) return alert("Wrong password");
 
-  usersRef.child(u).once("value", snap => {
-    const d = snap.val();
-    if (!d) return alert("User not found");
-
-    if (d.banned) {
-      bannedScreen.style.display = "flex";
-      return;
-    }
-
-    if (d.password !== h) return alert("Wrong password");
-
-    currentUser = u;
-    isAdmin = d.role === "admin";
-
-    loginPanel.style.display = "none";
-    suggestionBox.style.display = "block";
-
+    currentUser=u;
+    isAdmin=d.role==="admin";
+    loginPanel.style.display="none";
+    suggestionBox.style.display="block";
     loadChangelogs();
-    logAudit("login");
+    audit("login");
 
-    if (isAdmin) {
-      adminPanel.style.display = "block";
-      loadSuggestions();
-      loadAudits();
-    }
+    if(isAdmin) adminPanel.style.display="block";
   });
 }
 
 async function register(){
-  const u = loginUser.value.trim();
-  const p = loginPass.value;
-  if (!u || !p) return alert("Missing fields");
+  const u=loginUser.value.trim();
+  const p=loginPass.value;
+  if(!u||!p) return alert("Missing");
 
-  const h = await hashPassword(p);
-
-  usersRef.child(u).once("value", snap => {
-    if (snap.exists()) return alert("User exists");
-
-    usersRef.child(u).set({
-      password: h,
-      role: "user",
-      banned: false
-    });
-
-    logAudit("register", u);
-    alert("Registered. Please login.");
-  });
+  const h=await hashPassword(p);
+  users.child(u).set({password:h,role:"user",banned:false});
+  audit("register "+u);
+  alert("Registered, login now.");
 }
 
 /* ================= CHANGELOGS ================= */
-function renderChangelog(v, c){
-  const d = document.createElement("details");
-  const s = document.createElement("summary");
-  s.textContent = "Version " + v;
-  d.appendChild(s);
-
-  const ul = document.createElement("ul");
-  c.forEach(x=>{
-    const li=document.createElement("li");
-    li.textContent=x;
-    ul.appendChild(li);
-  });
+function render(v,c){
+  const d=document.createElement("details");
+  d.innerHTML=`<summary>Version ${v}</summary>`;
+  const ul=document.createElement("ul");
+  c.forEach(x=>{const li=document.createElement("li");li.textContent=x;ul.appendChild(li)});
   d.appendChild(ul);
-
-  if (isAdmin) {
-    const b = document.createElement("button");
-    b.textContent = "Delete";
-    b.className = "deleteBtn";
-    b.onclick = () => {
-      d.remove();
-      saveChangelogs();
-      logAudit("delete_changelog", v);
-    };
-    d.appendChild(b);
-  }
-
   changelogs.appendChild(d);
 }
 
-function saveChangelogs(){
-  const data = [...document.querySelectorAll("#changelogs details")].map(d=>({
-    version: d.querySelector("summary").textContent.replace("Version ",""),
-    changes: [...d.querySelectorAll("li")].map(li=>li.textContent)
-  }));
-  changelogRef.set(data);
+function loadChangelogs(){
+  changelogsRef.on("value",s=>{
+    changelogs.innerHTML="";
+    s.val()?.forEach(e=>render(e.version,e.changes));
+  });
 }
 
 function addChangelog(){
-  const v = versionInput.value.trim();
-  const c = changesInput.value.split("\n").filter(x=>x.trim());
-  if (!v || !c.length) return alert("Invalid");
-  renderChangelog(v, c);
-  saveChangelogs();
-  logAudit("add_changelog", v);
-}
-
-function loadChangelogs(){
-  changelogRef.on("value", snap => {
-    changelogs.innerHTML = "";
-    snap.val()?.forEach(e=>renderChangelog(e.version,e.changes));
-  });
-}
-
-/* ================= SUGGESTIONS ================= */
-function submitSuggestion(){
-  const t = suggestionText.value.trim();
-  if (!t) return;
-  suggestionsRef.push({ user: currentUser, text: t });
-  logAudit("suggestion", t);
-  suggestionText.value = "";
-}
-
-function loadSuggestions(){
-  suggestionsRef.on("value", snap => {
-    suggestionList.innerHTML = "";
-    snap.forEach(x=>{
-      const d=x.val();
-      const li=document.createElement("li");
-      li.innerHTML = `<b>${d.user}</b>: ${d.text}
-      <button onclick="banUser('${d.user}')">Ban</button>`;
-      suggestionList.appendChild(li);
-    });
-  });
-}
-
-/* ================= BAN ================= */
-function banUser(u){
-  if (!confirm("Ban "+u+"?")) return;
-  usersRef.child(u).update({ banned:true });
-  logAudit("ban", u);
-}
-
-/* ================= AUDIT ================= */
-function loadAudits(){
-  auditRef.limitToLast(50).on("value", snap => {
-    auditList.innerHTML = "";
-    snap.forEach(x=>{
-      const d=x.val();
-      const li=document.createElement("li");
-      li.textContent = `[${d.time}] ${d.user} → ${d.action} ${d.target||""}`;
-      auditList.appendChild(li);
-    });
-  });
+  const v=versionInput.value;
+  const c=changesInput.value.split("\n").filter(Boolean);
+  changelogsRef.push({version:v,changes:c});
+  audit("add changelog "+v);
 }
 </script>
 
